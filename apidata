@@ -1,0 +1,104 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import json, urllib
+from urllib import urlencode
+from multiprocessing.dummy import Pool as ThreadPool
+import sys
+reload(sys)
+#接入股票数据接口
+def main():
+
+    #配置申请的APPKey
+    appkey = ""
+
+    #1.沪深股市
+    request1(appkey,"POST")
+    #2.深圳股市列表
+    request6(appkey,"POST")
+
+    #3.沪股列表
+    request7(appkey,"POST")
+
+#沪深股市
+def request1(appkey, m="POST"):#GET与POST区别
+    url = "http://web.juhe.cn:8080/finance/stock/hs"
+    params = {
+        "gid" : "sh601009", #股票编号
+        "key" : "", #APP Key
+
+    }
+    params = urlencode(params)
+    if m =="POST":
+        f = urllib.urlopen("%s?%s" % (url, params))
+    else:
+        f = urllib.urlopen(url, params)
+
+    content = f.read()
+    res = json.loads(content)
+    if res:
+        error_code = res["error_code"]
+        if error_code == 0:
+            #成功请求
+            print res["result"]
+        else:
+            print "%s:%s" % (res["error_code"],res["reason"])
+    else:
+        print "request api error"
+#深圳股市列表
+def request6(appkey, m="POST"):
+    url = "http://web.juhe.cn:8080/finance/stock/szall"
+    params = {
+        "key" :"", 
+        "page" : "1", #第几页(每页20条数据),默认第1页
+
+    }
+    params = urlencode(params)
+    if m =="POST":
+        f = urllib.urlopen("%s?%s" % (url, params))
+    else:
+        f = urllib.urlopen(url, params)
+
+    content = f.read()
+    res = json.loads(content)
+    if res:
+        error_code = res["error_code"]
+        if error_code == 0:
+            #成功请求
+            print res["result"]
+        else:
+            print "%s:%s" % (res["error_code"],res["reason"])
+    else:
+        print "request api error"
+
+#沪股列表
+def request7(appkey, m="POST"):
+    url = "http://web.juhe.cn:8080/finance/stock/shall"
+    params = {
+        "key" : "", 
+        "page" : "1",
+     #第几页,每页20条数据,默认第1页
+
+    }
+    params = urlencode(params)
+    if m =="POST":
+        f = urllib.urlopen("%s?%s" % (url, params))
+    else:
+        f = urllib.urlopen(url, params)
+
+    content = f.read()
+    res = json.loads(content)
+    if res:
+        error_code = res["error_code"]
+        if error_code == 0:
+            #成功请求
+            print res["result"]
+        else:
+            print "%s:%s" % (res["error_code"],res["reason"])
+    else:
+        print "request api error"
+
+
+
+if __name__ == '__main__':
+    main()
+
